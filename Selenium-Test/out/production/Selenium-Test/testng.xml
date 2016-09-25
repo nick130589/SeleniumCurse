@@ -5,5 +5,11 @@
     <classes>
       <class name="com.example.tests.GroupCreationTests"/>
     </classes>
-  </test>  
+  </test>
+
+  <test name="Test2">
+    <classes>
+      <class name="com.example.tests.ContactCreationTests"/>
+    </classes>
+  </test>
 </suite>
