@@ -12,11 +12,14 @@ import java.util.List;
  */
 public class ContactHelper extends HelperBase {
 
+    public static boolean CREATION = true;
+    public static boolean MODIFICATION = false;
+
     public ContactHelper(ApplicationManager manager) {
         super(manager);
     }
 
-    public void fillContactForm(ContactData contactData) {
+    public void fillContactForm(ContactData contactData, boolean formType) {
         type(By.name("firstname"), contactData.firstName);
         type(By.name("lastname"), contactData.lastName);
         type(By.name("address"), contactData.address);
@@ -28,7 +31,15 @@ public class ContactHelper extends HelperBase {
         selectByText(By.name("bday"), contactData.dayOfBirthday);
         selectByText(By.name("bmonth"), contactData.monthOfBirthday);
         type(By.name("byear"), contactData.yearOfBirthday);
-        //selectByText(By.name("new_group"), contactData.relatedGroup);
+        if (formType = CREATION) {
+            //selectByText(By.name("new_group"), "group 1");
+        } else {
+            if (driver.findElements(By.name("new_group")).size() != 0)
+            {
+                throw new Error("Group selector exists in contact modification form");
+            }
+            //selectByText(By.name("new_group"), contactData.relatedGroup);
+        }
         type(By.name("address2"), contactData.secondAddress);
         type(By.name("phone2"), contactData.secondHomePhone);
     }
@@ -56,11 +67,11 @@ public class ContactHelper extends HelperBase {
     }
 
     private void selectContactByIndex(int index) {
-        click(By.xpath("//tr[@name='entry']["+(index+1)+"]//input[@name='selected[]']"));
+        click(By.xpath("//tr[@name='entry'][" + (index + 1) + "]//input[@name='selected[]']"));
     }
 
     private void editContactByIndex(int index) {
-        click(By.xpath("//tr[@name='entry']["+(index+1)+"]//img[@ alt = 'Edit']"));
+        click(By.xpath("//tr[@name='entry'][" + (index + 1) + "]//img[@ alt = 'Edit']"));
 
     }
 
@@ -77,11 +88,11 @@ public class ContactHelper extends HelperBase {
         List<ContactData> contacts = new ArrayList<>();
         List<WebElement> checkboxes = driver.findElements(By.name("selected[]"));
         for (WebElement checkbox : checkboxes) {
-            ContactData contact =new ContactData();
-            String title =checkbox.getAttribute("title");
+            ContactData contact = new ContactData();
+            String title = checkbox.getAttribute("title");
 
             contact.firstName = title.substring("Select (".length(), title.indexOf(" ", "Select (".length()));
-            contact.lastName =title.substring("Select (".length()+contact.firstName.length()+1, title.length()-" ".length());
+            contact.lastName = title.substring("Select (".length() + contact.firstName.length() + 1, title.length() - " ".length());
 
             contacts.add(contact);
         }

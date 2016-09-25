@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Random;
 
 import static org.testng.Assert.assertEquals;
+import static com.example.fw.ContactHelper.MODIFICATION;
 
 /**
  * Created by Nick on 9/17/2016.
@@ -15,7 +16,6 @@ public class ContactModificationTest extends TestBase {
 
     @Test(dataProvider = "randomValidContactGenerator")
     public void modificationSomeContact(ContactData contact){
-        app.getNavigationHelper().openMainPage();
         //save old state
         List<ContactData> oldList = app.getContactHelper().getContactData();
 
@@ -24,7 +24,7 @@ public class ContactModificationTest extends TestBase {
 
         //action
         app.getContactHelper().initContactModification(index);
-        app.getContactHelper().fillContactForm(contact);
+        app.getContactHelper().fillContactForm(contact, MODIFICATION);
         app.getContactHelper().submitContactModification();
         app.getContactHelper().returnToHomePage();
         //save new state
