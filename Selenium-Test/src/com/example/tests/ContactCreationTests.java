@@ -3,53 +3,31 @@ package com.example.tests;
 
 import org.testng.annotations.Test;
 
+import java.util.Collections;
+import java.util.List;
+
+import static org.testng.Assert.assertEquals;
+
 
 public class ContactCreationTests extends TestBase {
 
-    @Test
-    public void testNonEmptyContactCreation() throws Exception {
+    @Test(dataProvider = "randomValidContactGenerator")
+    public void testContactCreationWithValidData(ContactData contact) throws Exception {
         app.getNavigationHelper().openMainPage();
-        app.getContactHelper().initContactCreation();
-        ContactData contactData = new ContactData();
-        contactData.firstName = "First name1";
-        contactData.lastName = "Last name 2";
-        contactData.address = "Address";
-        contactData.homePhone = "1";
-        contactData.mobilePhone = "2";
-        contactData.workPhone =  "3";
-        contactData.firstEmail = "n@mail.ru";
-        contactData.secondEmail = "n@mail.ru";
-        contactData.dayOfBirthday = "13";
-        contactData.monthOfBirthday = "June";
-        contactData.yearOfBirthday = "1989";
-        contactData.relatedGroup = "Group 1";
-        contactData.secondAddress = "Addres2";
-        contactData.secondHomePhone = "home";
-        app.getContactHelper().fillContactForm(contactData);
-    }
+        //save old state
+        List<ContactData> oldList = app.getContactHelper().getContactData();
 
-    @Test
-    public void testEmptyContactCreation() throws Exception {
-        app.getNavigationHelper().openMainPage();
+        //action
         app.getContactHelper().initContactCreation();
-        ContactData contactData = new ContactData();
-        contactData.firstName = "";
-        contactData.lastName = "";
-        contactData.address = "";
-        contactData.homePhone = "";
-        contactData.mobilePhone = "";
-        contactData.workPhone =  "";
-        contactData.firstEmail = "";
-        contactData.secondEmail = "";
-        contactData.dayOfBirthday = "-";
-        contactData.monthOfBirthday = "-";
-        contactData.yearOfBirthday = "";
-        contactData.relatedGroup = "";
-        contactData.secondAddress = "";
-        contactData.secondHomePhone = "";
-        app.getContactHelper().fillContactForm(contactData);
+        app.getContactHelper().fillContactForm(contact);
         app.getContactHelper().submitContactCreation();
         app.getContactHelper().returnToHomePage();
-    }
+        //save new state
+        List<ContactData> newList = app.getContactHelper().getContactData();
 
+        // compare states
+        oldList.add(contact);
+        Collections.sort(oldList);
+        assertEquals(newList, oldList);
+    }
 }
