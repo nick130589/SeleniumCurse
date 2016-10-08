@@ -1,12 +1,12 @@
 package com.example.tests;
 
+import com.example.utils.SortedListOf;
 import org.testng.annotations.Test;
 
-import java.util.Collections;
-import java.util.List;
 import java.util.Random;
 
-import static org.testng.Assert.assertEquals;
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertThat;
 
 /**
  * Created by Nick on 9/17/2016.
@@ -15,25 +15,18 @@ public class ContactModificationTest extends TestBase {
 
     @Test(dataProvider = "randomValidContactGenerator")
     public void modificationSomeContact(ContactData contact){
-        app.getNavigationHelper().openMainPage();
         //save old state
-        List<ContactData> oldList = app.getContactHelper().getContactData();
+        SortedListOf<ContactData> oldList = app.getContactHelper().getContactData();
 
         Random rnd = new Random();
         int index = rnd.nextInt(oldList.size() - 1);
 
         //action
-        app.getContactHelper().initContactModification(index);
-        app.getContactHelper().fillContactForm(contact);
-        app.getContactHelper().submitContactModification();
-        app.getContactHelper().returnToHomePage();
+        app.getContactHelper().modifyContact(index, contact);
         //save new state
-        List<ContactData> newList = app.getContactHelper().getContactData();
+        SortedListOf<ContactData> newList = app.getContactHelper().getContactData();
 
         // compare states
-        oldList.remove(index);
-        oldList.add(contact);
-        Collections.sort(oldList);
-        assertEquals(newList, oldList);
+        assertThat(newList, equalTo(oldList.without(index).withAdded(contact)));
     }
 }
