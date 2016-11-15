@@ -5,7 +5,12 @@ import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.DataProvider;
 
+import java.io.File;
+import java.io.FileReader;
 import java.util.*;
+
+import static com.example.tests.GroupDataGenerator.generateRandomGroups;
+import static com.example.tests.ContactDataGenerator.generateRandomContatcts;
 
 /**
  * Created by Nick on 9/17/2016.
@@ -16,7 +21,9 @@ public class TestBase {
 
     @BeforeSuite
     public void setUp() throws Exception {
-        app = new ApplicationManager();
+        Properties properties = new Properties();
+        properties.load(new FileReader(new File("D:\\Repositoriy\\SeleniumCurse\\Selenium-Test\\src\\application.properties")));
+        app = new ApplicationManager(properties);
     }
 
     @AfterSuite
@@ -26,52 +33,27 @@ public class TestBase {
 
     @DataProvider
     public Iterator<Object[]> randomValidGroupGenerator() {
+        return wrapGroupForDataProvider(generateRandomGroups(5)).iterator();
+    }
+
+    public static List<Object[]> wrapGroupForDataProvider(List<GroupData> groups) {
         List<Object[]> list = new ArrayList<>();
-        for (int i = 0; i < 5; i++) {
-            GroupData group = new GroupData()
-                    .withName(generateRandomString())
-                    .withHeader(generateRandomString())
-                    .withFooter(generateRandomString());
+        for (GroupData group : groups) {
             list.add(new Object[]{group});
         }
-        return list.iterator();
+        return list;
     }
 
     @DataProvider
     public Iterator<Object[]> randomValidContactGenerator() {
+        return wrapContactForDataProvider(generateRandomContatcts(5)).iterator();
+    }
+
+    public static List<Object[]> wrapContactForDataProvider(List<ContactData> contacts) {
         List<Object[]> list = new ArrayList<>();
-        for (int i = 0; i < 5; i++) {
-            ContactData contact = new ContactData().
-                    withFirstName(generateRandomString()).
-                    withLastName(generateRandomString()).
-                    withAddress(generateRandomString()).
-                    withHomePhone(generateRandomString()).
-                    withMobilePhone(generateRandomString()).
-                    withWorkPhone(generateRandomString()).
-                    withFirstEmail(generateRandomEmail()).
-                    withSecondEmail(generateRandomEmail()).
-                    withDayOfBirthday("13").
-                    withMonthOfBirthday("June").
-                    withYearOfBirthday("1989").
-                    withSecondAddress(generateRandomString()).
-                    withSecondHomePhone(generateRandomString());
+        for (ContactData contact : contacts) {
             list.add(new Object[]{contact});
         }
-        return list.iterator();
+        return list;
     }
-
-    public String generateRandomString() {
-        Random rnd = new Random();
-        if (rnd.nextInt(3) == 0) {
-            return "";
-        } else {
-            return "test" + rnd.nextInt();
-        }
-    }
-
-    private  String generateRandomEmail() {
-        return "random-" + UUID.randomUUID().toString() + "@gmail.com";
-    }
-
-
 }

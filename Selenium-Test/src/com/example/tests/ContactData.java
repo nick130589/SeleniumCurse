@@ -40,6 +40,8 @@ public class ContactData implements Comparable<ContactData> {
     public String toString() {
         return "ContactData{" +
                 "firstName='" + firstName + '\'' +
+                " lastName='" + lastName + '\'' +
+                " address='" + address + '\'' +
                 '}';
     }
 
